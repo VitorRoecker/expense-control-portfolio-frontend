@@ -12,10 +12,23 @@
   
 ## 🚀 Getting Started
 
-> - Clone the frontend repository: `git clone <frontend-repository-url>`.
-> - Navigate to the project directory: `cd <frontend-project-directory>`.
-> - Install dependencies: `npm install`.
-> - Start the development server: `npm start`.
+### Clone the frontend repository: 
+```cmd
+git clone <frontend-repository-url>
+```
+
+### Navigate to the project directory: 
+```cmd
+cd <frontend-project-directory>
+```
+### Install dependencies: 
+```cmd
+npm install
+```
+### Start the development server: 
+```cmd
+npm start
+```
 
 ##
 Thank you for considering or using this project! Feel free to star ⭐ the repository if you find it helpful!
