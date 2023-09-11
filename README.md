@@ -16,7 +16,6 @@
 ```cmd
 git clone <frontend-repository-url>
 ```
-
 ### Navigate to the project directory: 
 ```cmd
 cd <frontend-project-directory>
