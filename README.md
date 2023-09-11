@@ -7,8 +7,7 @@
 
 > - Library: React
 > - Language: TypeScript
-> - State Management: Redux (or your choice)
-> - UI Library: Material-UI (or your choice)
+> - UI Library: Material-UI 
   
 ## 🚀 Getting Started
 
