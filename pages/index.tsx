@@ -1,14 +1,7 @@
-import Image from 'next/image'
 import { Inter } from 'next/font/google'
-import { useRouter } from 'next/router';
 import Link from 'next/link';
 
 const inter = Inter({ subsets: ['latin'] })
-
-function redirectToAuth() {
-  const router = useRouter();
-  router.push('/auth');
-}
 
 export default function Home() {
   return (
