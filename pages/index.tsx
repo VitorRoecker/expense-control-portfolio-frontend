@@ -1,12 +1,17 @@
 import { Inter } from 'next/font/google'
-import Auth from './auth';
+import NavBar from '../components/navbar';
+import HomePage from './home'
+import { Layout } from 'antd'
 
-const inter = Inter({ subsets: ['latin'] })
+const { Footer } = Layout;
+
 
 export default function Home() {
   return (
     <>
-      <Auth></Auth>
+      <NavBar></NavBar>
+      <HomePage></HomePage>
+      <Footer style={{ textAlign: 'center' }}>Expensive Control ©2023 Created by Vitor A Roecker</Footer>
     </>
   )
 }
