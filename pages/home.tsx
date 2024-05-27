@@ -7,9 +7,9 @@ const { Content } = Layout;
 
 const Home = () => {
   const [cardValues, setCardValues] = useState({
-    lastIncome: 1500, 
-    lastExpense: 800, 
-    total: 700, 
+    lastIncome: 1500,
+    lastExpense: 800,
+    total: 700,
   });
 
   const cardData = [
