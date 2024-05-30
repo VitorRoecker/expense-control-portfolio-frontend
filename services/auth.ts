@@ -1,27 +1,28 @@
 import { API_ENDPOINTS } from "@/config/api";
 import { LoginRequest } from "@/types/interfaces/Request/loginRequest.interface";
 import { RegisterRequest } from "@/types/interfaces/Request/registerRequest.interface";
+import { toast } from "react-toastify";
 
 export async function Login(request: LoginRequest, routerPush: Function) {
-    var Url = API_ENDPOINTS.LOGIN;
-
     try {
-        console.log('login endpoint', Url);
-
-        await fetch(Url, {
+        debugger
+        await fetch(API_ENDPOINTS.LOGIN, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(request)
         }).then(async (response) => {
+            debugger
             if (response.status == 200) {
                 var data = await response.json() as ILoginResponse;
                 localStorage.setItem("Authentication", JSON.stringify(data));
-                routerPush();
+                toast.success('Login efetuado com sucesso!')
+                routerPush()
+            } else if (response.status == 400) {
+                var errorData = await response.json()
+                toast.error(`${errorData.message}`)
             }
-        }, (error) => {
-            console.log(error);
         });
 
     } catch (error) {

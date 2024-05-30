@@ -4,7 +4,8 @@ import HomePage from './home'
 import { Layout } from 'antd'
 import { useEffect } from 'react';
 import { useRouter } from 'next/router';
-import Auth from './auth';
+import AuthPage from './auth';
+import { ToastContainer } from 'react-toastify';
 
 const { Footer } = Layout;
 
@@ -18,9 +19,9 @@ export default function Home() {
 
   return (
     <>
-      <NavBar></NavBar>
-      <HomePage></HomePage>
-      <Footer style={{ textAlign: 'center' }}>Expensive Control ©2023 Created by Vitor A Roecker</Footer>
+      {/* <NavBar></NavBar> */}
+      <AuthPage></AuthPage>
+      {/* <Footer style={{ textAlign: 'center' }}>Expensive Control ©2023 Created by Vitor A Roecker</Footer> */}
     </>
   )
 }

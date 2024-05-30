@@ -1,16 +1,17 @@
-import Input from "@/components/input";
-import { Register } from "@/services/auth";
+'use client'
+
+import { Register, Login } from "@/services/auth";
 import { RegisterRequest } from "@/types/interfaces/Request/registerRequest.interface";
 import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useState } from "react";
-import { getSession, signIn } from "next-auth/react";
-import { clearCpfCnpj } from "@/utils/clearDocument";
-import { toast } from "react-toastify";
-
+import { ToastContainer, toast } from "react-toastify";
+import { LoginRequest } from "@/types/interfaces/Request/loginRequest.interface";
+import { Button, Card, Checkbox, Col, Drawer, Form, Input, Row } from "antd";
+import { EyeInvisibleOutlined, EyeOutlined, EyeTwoTone, LockOutlined, UserOutlined } from "@ant-design/icons";
 
 const Auth = () => {
     const router = useRouter();
-
+    const [passwordVisible, setPasswordVisible] = useState(false);
     const [documento, setDocumento] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -19,26 +20,17 @@ const Auth = () => {
     const [variant, setVariant] = useState('login');
 
     const toggleVariant = useCallback(() => {
+        setEmail('')
+        setPassword('')
+        setConfirmPassword('')
         setVariant((currentVariant) => currentVariant === 'login' ? 'register' : 'login');
     }, []);
 
-    useEffect(() => {
-
-    }, [])
-
     const login = async () => {
         debugger
-        const result = await signIn("credentials", {
-            document: clearCpfCnpj(documento),
-            password: password
-        });
+        const loginRequest: LoginRequest = { DocumentoFederal: documento, Password: password }
 
-        if (result?.ok) {
-            var session = await getSession();
-            router.replace("")
-        } else {
-            toast(result?.error, { type: "error", autoClose: 2000 });
-        }
+        const result = await Login(loginRequest, () => router.replace('/home'))
     };
 
     const register = async () => {
@@ -63,54 +55,114 @@ const Auth = () => {
 
     return (
         <div className="relative h-full w-full bg-[url('/images/login-background.jpg')] bg-no-repeat bg-center bg-fixed bg-cover">
-            <div className="flex h-3/4 justify-center items-center">
-                <div className="bg-white bg-opacity-90 px-16 py-16 self-center mt-2 lg:w-2/5 lg:max-w-md rounded-md w-full">
-                    <h2 className="text-black text-4xl mb-8 font-semibold"> {variant == 'login' ? 'Login' : 'Registrar-se'}</h2>
-                    <div className="flex flex-col gap-4">
-                        {variant == 'register' && (
-                            <Input
-                                id="email"
-                                type="text"
-                                label="Email"
-                                value={email}
-                                onChange={(e: any) => setEmail(e.target.value)}
-                            />
-                        )}
-                        <Input
-                            id="documento"
-                            type="text"
-                            label="Documento"
-                            value={documento}
-                            onChange={(e: any) => setDocumento(e.target.value)}
-                        />
-                        <Input
-                            id="password"
-                            type="password"
-                            label="Senha"
-                            value={password}
-                            onChange={(e: any) => setPassword(e.target.value)}
-                        />
-                        {variant == 'register' && (
-                            <Input
-                                id="confirmPassword"
-                                type="password"
-                                label="Confirme a senha"
-                                value={confirmPassword}
-                                onChange={(e: any) => setConfirmPassword(e.target.value)}
-                            />
-                        )}
-                    </div>
-                    <button className="bg-black py-3 text-white rounded-md w-full mt-10 hover:bg-black transition" onClick={variant == 'login' ? login : register}>
-                        {variant == 'login' ? 'Entrar' : 'Registrar'}
-                    </button>
-                    <p className="text-neutral-500 mt-12">
-                        {variant == 'login' ? 'Primeira vez aqui?' : 'Ja possui uma conta?'}
-                        <span onClick={toggleVariant} className="text-black ml-1 hover:underline cursor-pointer">
-                            {variant == 'login' ? 'Registre-se' : 'Entrar'}
-                        </span>
-                    </p>
-                </div>
-            </div>
+            <Row>
+                <Col span={18}>
+                    <Card style={{ marginLeft: 450, marginRight: 450, marginTop: 120 }}>
+                        <h2 className="text-black text-4xl mb-8 font-semibold"> {variant == 'login' ? 'Login' : 'Registrar-se'}</h2>
+
+
+                        <Form
+                            style={{ marginTop: 50 }}
+                            name="normal_login"
+                            className="login-form"
+                            initialValues={{
+                                remember: true,
+                            }}
+                        >
+                            {variant === 'register' &&
+                                <Form.Item
+                                    name="Email"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: 'Por favor insira seu email',
+                                        },
+                                        // {
+                                        //     // pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$/,
+                                        //     message: 'Por favor insira um email válido'
+                                        // }
+
+                                    ]}
+                                >
+                                    <Input id="email"
+                                        type="text"
+                                        placeholder="Email"
+                                        value={email}
+                                        onChange={(e: any) => setEmail(e.target.value)}
+                                    />
+                                </Form.Item>
+                            }
+                            <Form.Item
+                                name="username"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Por favor insira seu Documento Federal!',
+                                    },
+                                ]}
+                            >
+                                <Input
+                                    placeholder="Documento Federal"
+                                    id="documento"
+                                    type="text"
+                                    value={documento}
+                                    onChange={(e: any) => setDocumento(e.target.value)}
+                                />
+                            </Form.Item>
+
+                            <Form.Item
+                                name="password"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Por favor insira sua senha',
+                                    },
+                                ]}
+                            >
+                                <Input.Password
+                                    id="password"
+                                    type="password"
+                                    placeholder="Senha"
+                                    value={password}
+                                    onChange={(e: any) => setPassword(e.target.value)}
+                                />
+                            </Form.Item>
+                            {variant === 'register' &&
+
+                                <Form.Item
+                                    name="passwordConfirm"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: 'Por favor insira sua senha',
+                                        },
+                                    ]}
+                                >
+                                    <Input.Password
+                                        id="confirmPassword"
+                                        type="password"
+                                        value={confirmPassword}
+                                        placeholder="Confirmar senha"
+                                        onChange={(e: any) => setConfirmPassword(e.target.value)}
+
+                                    />
+                                </Form.Item>
+                            }
+
+                            <Form.Item>
+                                <Button size="large" style={{ width: '100%', backgroundColor: 'black', color: 'white' }} onClick={variant == 'login' ? login : register}  >
+                                    {variant == 'login' ? 'Entrar' : 'Registrar'}
+                                </Button>
+                            </Form.Item>
+                            <Form.Item>
+                                {variant == 'login' ? 'Primeira vez aqui?' : 'Ja possui uma conta?'}
+
+                                <span onClick={toggleVariant} className="text-black ml-1 hover:underline cursor-pointer"> {variant == 'login' ? 'Registre-se' : 'Entrar'}</span>
+                            </Form.Item>
+                        </Form>
+                    </Card>
+                </Col>
+            </Row>
         </div>
     )
 }

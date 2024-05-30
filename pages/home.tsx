@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Layout, Card } from 'antd';
 import { DollarOutlined, DownCircleOutlined, UpCircleOutlined } from '@ant-design/icons';
 import FinTable from '../components/table'
+import NavBar from '@/components/navbar';
 
 const { Content } = Layout;
 
@@ -20,6 +21,7 @@ const Home = () => {
 
   return (
     <Layout>
+      <NavBar/>
       <div style={{ display: 'flex', marginTop: '35px', justifyContent: 'center' }}>
         {cardData.map((data, index) => (
           <Card
