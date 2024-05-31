@@ -18,7 +18,7 @@ export class ExpenseService {
                     method: "GET",
                     headers: {
                         'Content-type': 'application/json',
-                        'Authentication': `Bearer ${this.Token}`
+                        'Authorization': `Bearer ${this.Token}`
                     }
                 }).then(async (response) => {
                     if (response.status == 200) {

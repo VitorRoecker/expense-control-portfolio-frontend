@@ -1,4 +1,5 @@
 interface UserToken {
     userId: string,
-    token: string
+    token: string,
+    expiration: Date
 }
