@@ -1,11 +1,18 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Menu, Layout } from 'antd';
-import { BellOutlined, HomeOutlined, UserOutlined } from '@ant-design/icons';
+import { BellOutlined, HomeOutlined, LogoutOutlined } from '@ant-design/icons';
+import router from 'next/router';
 
 const { Header } = Layout;
 
 const NavBar = () => {
     const [current, setCurrent] = useState('mail');
+
+    useEffect(() => {
+        if(current === 'logout') {
+            router.replace('/')
+        }
+    }, [current])
 
     const onClick = (e: any) => {
         console.log('click ', e);
@@ -14,14 +21,13 @@ const NavBar = () => {
 
     const items = [
         { icon: <HomeOutlined />, label: 'Home', key: 'mail'},
-        { icon: <BellOutlined />, key: 'notify' },
+        { icon: <LogoutOutlined />, label: 'Sair', key: 'logout' }
     ];
 
     return (
-        <Header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <Menu onClick={onClick} selectedKeys={[current]} mode="horizontal" items={items} style={{ flex: 1 }} />
-            <Menu onClick={onClick} selectedKeys={[current]} mode="horizontal" items={[{ icon: <UserOutlined />, label: 'User', key: 'user' }]} />
-        </Header>
+        <>
+        <Menu  style={{ display: 'flex', justifyContent: 'start', alignItems: 'center' }} onClick={onClick} selectedKeys={[current]} mode="horizontal" items={items} />
+        </>
     );
 };
 
