@@ -1,170 +1,221 @@
-'use client'
-
 import { Register, Login } from "@/services/auth";
-import { RegisterRequest } from "@/types/interfaces/Request/registerRequest.interface";
-import { useRouter } from 'next/navigation'
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
-import { ToastContainer, toast } from "react-toastify";
-import { LoginRequest } from "@/types/interfaces/Request/loginRequest.interface";
-import { Button, Card, Checkbox, Col, Drawer, Form, Input, Row } from "antd";
-import { EyeInvisibleOutlined, EyeOutlined, EyeTwoTone, LockOutlined, UserOutlined } from "@ant-design/icons";
+import { toast } from "react-toastify";
+import { LoginRequest } from "@/types/interfaces/Request/Auth/loginRequest.interface";
+import { Button, Card, Col, Form, Input, Row, Typography } from "antd";
+import { RegisterRequest } from "@/types/interfaces/Request/Auth/registerRequest.interface";
 
 const Auth = () => {
-    const router = useRouter();
-    const [passwordVisible, setPasswordVisible] = useState(false);
-    const [documento, setDocumento] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
+  const router = useRouter();
+  const [documento, setDocumento] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
-    const [variant, setVariant] = useState('login');
+  const [variant, setVariant] = useState("login");
 
-    const toggleVariant = useCallback(() => {
-        setEmail('')
-        setPassword('')
-        setConfirmPassword('')
-        setVariant((currentVariant) => currentVariant === 'login' ? 'register' : 'login');
-    }, []);
+  const toggleVariant = useCallback(() => {
+    setEmail("");
+    setPassword("");
+    setConfirmPassword("");
+    setVariant((currentVariant) =>
+      currentVariant === "login" ? "register" : "login"
+    );
+  }, []);
 
-    const login = async () => {
-        debugger
-        const loginRequest: LoginRequest = { DocumentoFederal: documento, Password: password }
-
-        const result = await Login(loginRequest, () => router.replace('/home'))
+  const login = async () => {
+    const loginRequest: LoginRequest = {
+      DocumentoFederal: documento,
+      Password: password,
     };
 
-    const register = async () => {
-        debugger
-        if (password !== confirmPassword) {
-            toast('As senhas não são iguais', { hideProgressBar: true, autoClose: 2000, type: 'error' })
-            return
-        }
+    const result = await Login(loginRequest, () => router.replace("/home"));
+  };
 
-        const registerRequest: RegisterRequest = { DocumentoFederal: documento, Email: email, Password: password }
+  const register = async () => {
+    if (password !== confirmPassword) {
+      toast("As senhas não são iguais", {
+        hideProgressBar: true,
+        autoClose: 2000,
+        type: "error",
+      });
+      return;
+    }
 
-        const res = await Register(registerRequest);
-
-        if (!res.ok) {
-            toast('Erro ao cadastrar')
-            return
-        }
-
-        toast('Cadastro realizado com sucesso', { type: 'success', autoClose: 2000 })
-        setVariant('login')
+    const registerRequest: RegisterRequest = {
+      DocumentoFederal: documento,
+      Email: email,
+      Password: password,
     };
 
-    return (
-        <div className="relative h-full w-full bg-[url('/images/login-background.jpg')] bg-no-repeat bg-center bg-fixed bg-cover">
-            <Row>
-                <Col span={18}>
-                    <Card style={{ marginLeft: 450, marginRight: 450, marginTop: 120 }}>
-                        <h2 className="text-black text-4xl mb-8 font-semibold"> {variant == 'login' ? 'Login' : 'Registrar-se'}</h2>
+    const res = await Register(registerRequest);
 
+    if (!res.ok) {
+      toast("Erro ao cadastrar");
+      return;
+    }
 
-                        <Form
-                            style={{ marginTop: 50 }}
-                            name="normal_login"
-                            className="login-form"
-                            initialValues={{
-                                remember: true,
-                            }}
-                        >
-                            {variant === 'register' &&
-                                <Form.Item
-                                    name="Email"
-                                    rules={[
-                                        {
-                                            required: true,
-                                            message: 'Por favor insira seu email',
-                                        },
-                                        // {
-                                        //     // pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$/,
-                                        //     message: 'Por favor insira um email válido'
-                                        // }
+    toast("Cadastro realizado com sucesso", {
+      type: "success",
+      autoClose: 2000,
+    });
+    setVariant("login");
+  };
 
-                                    ]}
-                                >
-                                    <Input id="email"
-                                        type="text"
-                                        placeholder="Email"
-                                        value={email}
-                                        onChange={(e: any) => setEmail(e.target.value)}
-                                    />
-                                </Form.Item>
-                            }
-                            <Form.Item
-                                name="username"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: 'Por favor insira seu Documento Federal!',
-                                    },
-                                ]}
-                            >
-                                <Input
-                                    placeholder="Documento Federal"
-                                    id="documento"
-                                    type="text"
-                                    value={documento}
-                                    onChange={(e: any) => setDocumento(e.target.value)}
-                                />
-                            </Form.Item>
+  return (
+    <div className="relative h-full w-full bg-[url('/images/login-background.jpg')] bg-no-repeat bg-center bg-fixed bg-cover">
+      <Row
+        justify="center"
+        align="middle"
+        style={{ minHeight: "100vh", padding: "0 20px" }}
+      >
+        <Col xs={24} sm={20} md={16} lg={12} xl={10} xxl={8}>
+          <Card style={{ maxWidth: "100%", marginTop: 20 }}>
+            <Typography
+              className="text-black text-4xl font-semibold"
+              style={{ textAlign: "center" }}
+            >
+              {variant === "login" ? "Login" : "Registrar-se"}
+            </Typography>
+            <Form
+              style={{ marginTop: 30 }}
+              name="normal_login"
+              className="login-form"
+              initialValues={{ remember: true }}
+            >
+              {variant === "register" && (
+                <Form.Item
+                  name="Email"
+                  rules={[
+                    {
+                      type: "email",
+                      message: "O E-mail informado não é válido!",
+                    },
+                    {
+                      required: true,
+                      message: "Por favor, insira seu E-mail!",
+                    },
+                  ]}
+                >
+                  <Input
+                    id="email"
+                    type="text"
+                    placeholder="Email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                </Form.Item>
+              )}
+              <Form.Item
+                name="username"
+                rules={[
+                  {
+                    required: true,
+                    message: "Por favor insira seu Documento Federal!",
+                  },
+                ]}
+              >
+                <Input
+                  placeholder="Documento Federal"
+                  id="documento"
+                  type="text"
+                  value={documento}
+                  onChange={(e) => setDocumento(e.target.value)}
+                />
+              </Form.Item>
 
-                            <Form.Item
-                                name="password"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: 'Por favor insira sua senha',
-                                    },
-                                ]}
-                            >
-                                <Input.Password
-                                    id="password"
-                                    type="password"
-                                    placeholder="Senha"
-                                    value={password}
-                                    onChange={(e: any) => setPassword(e.target.value)}
-                                />
-                            </Form.Item>
-                            {variant === 'register' &&
+              <Form.Item
+                name="password"
+                rules={[
+                  {
+                    required: true,
+                    message: "Por favor insira sua senha",
+                  },
+                  {
+                    validator: (_, value) => {
+                      const passwordRegex =
+                        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/;
+                      if (!passwordRegex.test(value)) {
+                        return Promise.reject(
+                          new Error(
+                            "A senha deve ter pelo menos 8 caracteres, incluindo letras maiúsculas, minúsculas, números e caracteres especiais"
+                          )
+                        );
+                      }
+                      return Promise.resolve();
+                    },
+                  },
+                ]}
+              >
+                <Input.Password
+                  id="password"
+                  type="password"
+                  placeholder="Senha"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              </Form.Item>
+              {variant === "register" && (
+                <Form.Item
+                  name="passwordConfirm"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Por favor confirme sua senha",
+                    },
+                    ({ getFieldValue }) => ({
+                      validator(_, value) {
+                        if (!value || getFieldValue("password") === value) {
+                          return Promise.resolve();
+                        }
+                        return Promise.reject(
+                          new Error("As senhas não estão iguais!")
+                        );
+                      },
+                    }),
+                  ]}
+                >
+                  <Input.Password
+                    id="confirmPassword"
+                    type="password"
+                    value={confirmPassword}
+                    placeholder="Confirmar senha"
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                  />
+                </Form.Item>
+              )}
 
-                                <Form.Item
-                                    name="passwordConfirm"
-                                    rules={[
-                                        {
-                                            required: true,
-                                            message: 'Por favor insira sua senha',
-                                        },
-                                    ]}
-                                >
-                                    <Input.Password
-                                        id="confirmPassword"
-                                        type="password"
-                                        value={confirmPassword}
-                                        placeholder="Confirmar senha"
-                                        onChange={(e: any) => setConfirmPassword(e.target.value)}
-
-                                    />
-                                </Form.Item>
-                            }
-
-                            <Form.Item>
-                                <Button size="large" style={{ width: '100%', backgroundColor: 'black', color: 'white' }} onClick={variant == 'login' ? login : register}  >
-                                    {variant == 'login' ? 'Entrar' : 'Registrar'}
-                                </Button>
-                            </Form.Item>
-                            <Form.Item>
-                                {variant == 'login' ? 'Primeira vez aqui?' : 'Ja possui uma conta?'}
-
-                                <span onClick={toggleVariant} className="text-black ml-1 hover:underline cursor-pointer"> {variant == 'login' ? 'Registre-se' : 'Entrar'}</span>
-                            </Form.Item>
-                        </Form>
-                    </Card>
-                </Col>
-            </Row>
-        </div>
-    )
-}
+              <Form.Item>
+                <Button
+                  size="large"
+                  style={{
+                    width: "100%",
+                    backgroundColor: "black",
+                    color: "white",
+                  }}
+                  onClick={variant === "login" ? login : register}
+                >
+                  {variant === "login" ? "Entrar" : "Registrar"}
+                </Button>
+              </Form.Item>
+              <Form.Item style={{ textAlign: "center" }}>
+                {variant === "login"
+                  ? "Primeira vez aqui?"
+                  : "Já possui uma conta?"}
+                <span
+                  onClick={toggleVariant}
+                  className="text-black ml-1 hover:underline cursor-pointer"
+                >
+                  {variant === "login" ? "Registre-se" : "Entrar"}
+                </span>
+              </Form.Item>
+            </Form>
+          </Card>
+        </Col>
+      </Row>
+    </div>
+  );
+};
 
 export default Auth;

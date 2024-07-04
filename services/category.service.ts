@@ -1,10 +1,6 @@
 import { API_ENDPOINTS } from "@/config/api";
-import { Expense } from "@/types/interfaces/expense.interface";
-import { CreateExpenseRequest } from "@/types/interfaces/Request/Expense/createExpense.interface";
-import { UpdateExpenseRequest } from "@/types/interfaces/Request/Expense/updateExpense.interface";
 import { BadRequestInterface } from "@/types/interfaces/Response/badRequestResponse.interface";
 import { toast } from "react-toastify";
-
 
 export class ExpenseService {
     private Token: string;
@@ -13,10 +9,10 @@ export class ExpenseService {
         this.Token = token
     }
 
-    public async GetAll(userId: string): Promise<Expense[]> {
-        var data: Expense[] = [];
+    public async GetAll(userId: string): Promise<Category[]> {
+        var data: Category[] = [];
         try {
-            await fetch(API_ENDPOINTS.EXPENSE + `?userId==${userId}`,
+            await fetch(API_ENDPOINTS.CATEGORY + `?userId==${userId}`,
                 {
                     method: "GET",
                     headers: {
@@ -25,7 +21,7 @@ export class ExpenseService {
                     },
                 }).then(async (response) => {
                     if (response.status == 200) {
-                        data = await response.json() as Expense[]
+                        data = await response.json() as Category[]
                     } else {
                         var error = await response.json() as BadRequestInterface
                         toast(error.content)
@@ -40,7 +36,7 @@ export class ExpenseService {
         }
     }
 
-    public async Get(id: string): Promise<Expense> {
+    public async Get(id: string): Promise<Category> {
         try {
             await fetch(API_ENDPOINTS.EXPENSE + `/${id}`,
                 {
@@ -51,23 +47,23 @@ export class ExpenseService {
                     },
                 }).then(async (response) => {
                     if (response.status == 200) {
-                        return await response.json() as Expense;
+                        return await response.json() as Category;
                     } else {
                         var error = await response.json() as BadRequestInterface
                         toast(error.content)
                     }
 
-                    return {} as Expense;
+                    return {} as Category;
                 })
-            return {} as Expense;
+            return {} as Category;
         }
         catch (error) {
             toast('Erro ao buscar gasto');
-            return {} as Expense;
+            return {} as Category;
         }
     }
 
-    public async Post(request: CreateExpenseRequest): Promise<string> {
+    public async Post(request: CreateCategoryRequest): Promise<string> {
         try {
             await fetch(API_ENDPOINTS.EXPENSE,
                 {
@@ -96,7 +92,7 @@ export class ExpenseService {
         }
     }
 
-    public async Put(request: UpdateExpenseRequest, id: string) {
+    public async Put(request: UpdateCategoryRequest, id: string) {
         try {
             await fetch(API_ENDPOINTS.EXPENSE + `?categoryId=${id}`,
                 {

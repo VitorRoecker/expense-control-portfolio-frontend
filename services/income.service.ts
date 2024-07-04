@@ -1,22 +1,19 @@
 import { API_ENDPOINTS } from "@/config/api";
-import { Expense } from "@/types/interfaces/expense.interface";
-import { CreateExpenseRequest } from "@/types/interfaces/Request/Expense/createExpense.interface";
-import { UpdateExpenseRequest } from "@/types/interfaces/Request/Expense/updateExpense.interface";
+import { Income } from "@/types/interfaces/income.interface";
 import { BadRequestInterface } from "@/types/interfaces/Response/badRequestResponse.interface";
 import { toast } from "react-toastify";
 
-
-export class ExpenseService {
+export class IncomeService {
     private Token: string;
 
     constructor(token: string) {
-        this.Token = token
+        this.Token = token;
     }
 
-    public async GetAll(userId: string): Promise<Expense[]> {
-        var data: Expense[] = [];
+    public async GetAll(userId: string): Promise<Income[]> {
+        var data: Income[] = [];
         try {
-            await fetch(API_ENDPOINTS.EXPENSE + `?userId==${userId}`,
+            await fetch(API_ENDPOINTS.INCOME + `?userId==${userId}`,
                 {
                     method: "GET",
                     headers: {
@@ -25,7 +22,7 @@ export class ExpenseService {
                     },
                 }).then(async (response) => {
                     if (response.status == 200) {
-                        data = await response.json() as Expense[]
+                        data = await response.json() as Income[]
                     } else {
                         var error = await response.json() as BadRequestInterface
                         toast(error.content)
@@ -40,9 +37,9 @@ export class ExpenseService {
         }
     }
 
-    public async Get(id: string): Promise<Expense> {
+    public async Get(id: string): Promise<Income> {
         try {
-            await fetch(API_ENDPOINTS.EXPENSE + `/${id}`,
+            await fetch(API_ENDPOINTS.INCOME + `/${id}`,
                 {
                     method: "GET",
                     headers: {
@@ -51,25 +48,25 @@ export class ExpenseService {
                     },
                 }).then(async (response) => {
                     if (response.status == 200) {
-                        return await response.json() as Expense;
+                        return await response.json() as Income;
                     } else {
                         var error = await response.json() as BadRequestInterface
                         toast(error.content)
                     }
 
-                    return {} as Expense;
+                    return {} as Income;
                 })
-            return {} as Expense;
+            return {} as Income;
         }
         catch (error) {
-            toast('Erro ao buscar gasto');
-            return {} as Expense;
+            toast('Erro ao buscar renda');
+            return {} as Income;
         }
     }
 
-    public async Post(request: CreateExpenseRequest): Promise<string> {
+    public async Post(request: CreateIncomeRequest): Promise<string> {
         try {
-            await fetch(API_ENDPOINTS.EXPENSE,
+            await fetch(API_ENDPOINTS.INCOME,
                 {
                     method: "POST",
                     headers: {
@@ -91,14 +88,14 @@ export class ExpenseService {
             return ""
         }
         catch (error) {
-            toast('Erro ao criar gasto')
+            toast('Erro ao criar renda')
             return ""
         }
     }
 
-    public async Put(request: UpdateExpenseRequest, id: string) {
+    public async Put(request: UpdateIncomeRequest, id: string) {
         try {
-            await fetch(API_ENDPOINTS.EXPENSE + `?categoryId=${id}`,
+            await fetch(API_ENDPOINTS.INCOME + `?incomeId=${id}`,
                 {
                     method: "PUT",
                     headers: {
@@ -122,7 +119,7 @@ export class ExpenseService {
 
     public async Delete(id: string) {
         try {
-            await fetch(API_ENDPOINTS.EXPENSE + `?expenseId=${id}`, {
+            await fetch(API_ENDPOINTS.INCOME + `?expenseId=${id}`, {
                 method: "DELETE",
                 headers: {
                     'Content-type': 'application/json',
