@@ -5,5 +5,6 @@ export const API_ENDPOINTS = {
     REGISTER: API_BASE_URL + "/api/User/register",
     EXPENSE: API_BASE_URL + "/api/Expense",
     INCOME: API_BASE_URL + "/api/Income",
-    CATEGORY: API_BASE_URL + "/api/Category"
+    CATEGORY: API_BASE_URL + "/api/Category",
+    USER: API_BASE_URL + "/api/User"
 }

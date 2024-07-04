@@ -12,17 +12,16 @@ const Auth = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [form] = Form.useForm();
 
   const [variant, setVariant] = useState("login");
 
   const toggleVariant = useCallback(() => {
-    setEmail("");
-    setPassword("");
-    setConfirmPassword("");
+    onReset();
     setVariant((currentVariant) =>
       currentVariant === "login" ? "register" : "login"
     );
-  }, []);
+  }, [form]);
 
   const login = async () => {
     const loginRequest: LoginRequest = {
@@ -49,18 +48,13 @@ const Auth = () => {
       Password: password,
     };
 
-    const res = await Register(registerRequest);
+    await Register(registerRequest);
 
-    if (!res.ok) {
-      toast("Erro ao cadastrar");
-      return;
-    }
+    toggleVariant()
+  };
 
-    toast("Cadastro realizado com sucesso", {
-      type: "success",
-      autoClose: 2000,
-    });
-    setVariant("login");
+  const onReset = () => {
+    form.resetFields();
   };
 
   return (
@@ -79,6 +73,7 @@ const Auth = () => {
               {variant === "login" ? "Login" : "Registrar-se"}
             </Typography>
             <Form
+              form={form}
               style={{ marginTop: 30 }}
               name="normal_login"
               className="login-form"
