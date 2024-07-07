@@ -20,14 +20,14 @@ const Home = () => {
   var expenseService: ExpenseService;
 
   const [cardValues, setCardValues] = useState({
-    lastIncome: 1500,
-    lastExpense: 800,
-    total: 700,
+    lastIncome: 100,
+    lastExpense: 100,
+    total: 0,
   });
+
 
   useEffect(() => {
     var authentication = localStorage.getItem("Authentication");
-
     if (authentication) {
       var userToken = JSON.parse(authentication) as UserToken;
       expenseService = new ExpenseService(userToken.token);
@@ -94,7 +94,7 @@ const Home = () => {
             </Col>
           ))}
         </Row>
-        <FinTable />
+        <FinTable expense={expenses} />
       </Content>
     </Layout>
   );

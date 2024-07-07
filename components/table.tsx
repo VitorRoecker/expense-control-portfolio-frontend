@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Button,
   Space,
@@ -47,7 +47,7 @@ const columns: ColumnsType<FinDto> = [
   },
 ];
 
-const FinTable = () => {
+const FinTable = (expense: any) => {
   const [data, setData] = useState<FinDto[]>(initialData);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingKey, setEditingKey] = useState<string | undefined>();
@@ -55,11 +55,9 @@ const FinTable = () => {
   const [newDescription, setNewDescription] = useState("");
   const [newTypeMov, setNewTypeMov] = useState("Income");
   const [newDate, setNewDate] = useState(dayjs());
-
   const handleAdd = () => {
     const newKey = (data.length + 1).toString();
     const formattedValue = newTypeMov === "Expense" ? `-${newValue}` : newValue;
-
     const newEntry: FinDto = {
       key: newKey,
       value: formattedValue.toString(),
@@ -72,6 +70,9 @@ const FinTable = () => {
     toast.success("Movimentação adicionada");
     setIsModalVisible(false);
   };
+
+  useEffect(() => {
+  })
 
   const handleEdit = (key: string) => {
     setEditingKey(key);
@@ -155,8 +156,8 @@ const FinTable = () => {
               value={newTypeMov}
               onChange={(value) => setNewTypeMov(value)}
             >
-              <Option value="Income">Income</Option>
-              <Option value="Expense">Expense</Option>
+              <Option value="Income">Entrada</Option>
+              <Option value="Expense">Saída</Option>
             </Select>
           </Form.Item>
           <Form.Item label="Descrição" required>
