@@ -1,4 +1,4 @@
-export const API_BASE_URL = "https://localhost:7047";
+export const API_BASE_URL = process.env.API_BASE_URL;
 
 export const API_ENDPOINTS = {
     LOGIN: API_BASE_URL + "/api/Auth/login",

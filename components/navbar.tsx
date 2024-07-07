@@ -19,7 +19,6 @@ const NavBar = () => {
   var userToken: UserToken;
 
   useEffect(() => {
-    debugger
     var authentication = localStorage.getItem("Authentication");
 
     if (authentication) {
@@ -48,7 +47,6 @@ const NavBar = () => {
   }, [current]);
 
   const onClick = (e: any) => {
-    console.log("click ", e);
     setCurrent(e.key);
   };
 

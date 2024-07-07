@@ -24,7 +24,6 @@ export async function Login(request: LoginRequest, routerPush: Function) {
       }
     });
   } catch (error) {
-    console.log(error);
   }
 }
 

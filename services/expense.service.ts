@@ -15,8 +15,9 @@ export class ExpenseService {
 
     public async GetAll(userId: string): Promise<Expense[]> {
         var data: Expense[] = [];
+        var url = API_ENDPOINTS.EXPENSE + `?userId=${userId}`;
         try {
-            await fetch(API_ENDPOINTS.EXPENSE + `?userId==${userId}`,
+            await fetch(url,
                 {
                     method: "GET",
                     headers: {
