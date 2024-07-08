@@ -13,6 +13,7 @@ const Auth = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [form] = Form.useForm();
+  const [loading, setLoading] = useState(false);
 
   const [variant, setVariant] = useState("login");
 
@@ -24,12 +25,22 @@ const Auth = () => {
   }, [form]);
 
   const login = async () => {
+    setLoading(true);
     const loginRequest: LoginRequest = {
       DocumentoFederal: documento,
       Password: password,
     };
-
-    const result = await Login(loginRequest, () => router.replace("/home"));
+    try {
+      await Login(loginRequest, () => router.replace("/home"));
+    } catch (error) {
+      toast("Verifique os dados", {
+        hideProgressBar: true,
+        autoClose: 2000,
+        type: "error",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const register = async () => {
@@ -41,16 +52,25 @@ const Auth = () => {
       });
       return;
     }
-
+    setLoading(true);
     const registerRequest: RegisterRequest = {
       DocumentoFederal: documento,
       Email: email,
       Password: password,
     };
 
-    await Register(registerRequest);
-
-    toggleVariant()
+    try {
+      await Register(registerRequest);
+      toggleVariant();
+    } catch (error) {
+      toast("Verifique os dados", {
+        hideProgressBar: true,
+        autoClose: 2000,
+        type: "error",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const onReset = () => {
@@ -190,6 +210,7 @@ const Auth = () => {
                     color: "white",
                   }}
                   onClick={variant === "login" ? login : register}
+                  disabled={loading}
                 >
                   {variant === "login" ? "Entrar" : "Registrar"}
                 </Button>
