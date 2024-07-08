@@ -37,8 +37,7 @@ const IncomeTable = () => {
       fetchCategoryItems(serviceCategories, userToken.userId);
       setUserId(userToken.userId);
     } else {
-      toast.warning("Erro ao buscar informações do login.");
-      router.replace("/home");
+      router.replace("/");
     }
   }, []);
 
@@ -106,7 +105,7 @@ const IncomeTable = () => {
         await incomeService.Delete(incomeId);
         getIncomeList(incomeService, userId);
       },
-      onCancel: () => {},
+      onCancel: () => { },
       okButtonProps: { style: { backgroundColor: "red" } },
     });
   };

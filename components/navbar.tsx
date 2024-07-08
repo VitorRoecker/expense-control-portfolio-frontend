@@ -8,7 +8,6 @@ import {
 } from "@ant-design/icons";
 import router from "next/router";
 import { UserService } from "@/services/user.service";
-import { toast } from "react-toastify";
 
 const { Header } = Layout;
 
@@ -25,8 +24,7 @@ const NavBar = () => {
       userToken = JSON.parse(authentication) as UserToken;
       userService = new UserService(userToken.token);
     } else {
-      toast.warning("Erro ao buscar informações do login.");
-      router.replace("/home");
+      router.replace("/");
     }
 
     handleMenuActions();
