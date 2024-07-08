@@ -42,8 +42,7 @@ const Home = () => {
       ExpenseGetData(userToken.userId);
       IncomeGetData(userToken.userId);
     } else {
-      toast.warning("Erro ao buscar informações do login.");
-      router.replace("/home");
+      router.replace("/");
     }
   }, []);
 

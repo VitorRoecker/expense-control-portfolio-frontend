@@ -29,12 +29,9 @@ const FinTable = () => {
       setUserId(userToken.userId);
       fetchCategoryItems(service, userToken.userId);
     } else {
-      toast.warning("Erro ao buscar informações do login.");
-      router.replace("/home");
+      router.replace("/");
     }
   }, []);
-
-  console.log(catService);
 
   const fetchCategoryItems = async (
     service: CategoryService,

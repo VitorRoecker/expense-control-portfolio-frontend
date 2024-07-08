@@ -101,7 +101,6 @@ export class CategoryService {
         }
       });
     } catch (error) {
-      console.log(error);
       toast("Erro ao atualizar");
     }
   }

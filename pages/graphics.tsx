@@ -16,6 +16,7 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+import { useRouter } from "next/navigation";
 
 // Register the necessary components
 Chart.register(
@@ -57,20 +58,24 @@ const Graphics = () => {
     ],
   });
 
+  const router = useRouter();
+
   let expenseService: ExpenseService;
   let incomeService: IncomeService;
 
   useEffect(() => {
     const fetchData = async () => {
       const authentication = localStorage.getItem("Authentication");
-      if (authentication) {
+      if (authentication != null) {
         const userToken = JSON.parse(authentication);
         expenseService = new ExpenseService(userToken.token);
         incomeService = new IncomeService(userToken.token);
 
         try {
-          const expenseData = await expenseService.GetAll(userToken.userId);
-          const incomeData = await incomeService.GetAll(userToken.userId);
+          const [expenseData, incomeData] = await Promise.all([
+            expenseService.GetAll(userToken.userId),
+            incomeService.GetAll(userToken.userId)
+          ])
 
           setExpenseItems(expenseData);
           setIncomeItems(incomeData);
@@ -79,6 +84,8 @@ const Graphics = () => {
         } catch (error) {
           console.error("Failed to fetch data:", error);
         }
+      } else {
+        router.replace("/");
       }
     };
 
