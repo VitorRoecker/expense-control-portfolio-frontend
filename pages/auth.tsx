@@ -3,7 +3,7 @@ import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { LoginRequest } from "@/types/interfaces/Request/Auth/loginRequest.interface";
-import { Button, Card, Col, Form, Input, Row, Typography } from "antd";
+import { Button, Card, Col, Form, Input, Row, Spin, Typography } from "antd";
 import { RegisterRequest } from "@/types/interfaces/Request/Auth/registerRequest.interface";
 
 const Auth = () => {
@@ -14,6 +14,7 @@ const Auth = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
+  const [componentLoading, setComponentLoading] = useState(true);
 
   const [variant, setVariant] = useState("login");
 
@@ -23,6 +24,12 @@ const Auth = () => {
       currentVariant === "login" ? "register" : "login"
     );
   }, [form]);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setComponentLoading(false);
+    }, 1000);
+  }, []);
 
   const login = async () => {
     setLoading(true);
@@ -85,149 +92,153 @@ const Auth = () => {
         style={{ minHeight: "100vh", padding: "0 20px" }}
       >
         <Col xs={24} sm={20} md={16} lg={12} xl={10} xxl={8}>
-          <Card style={{ maxWidth: "100%", marginTop: 20 }}>
-            <Typography
-              className="text-black text-4xl font-semibold"
-              style={{ textAlign: "center" }}
-            >
-              {variant === "login" ? "Login" : "Registrar-se"}
-            </Typography>
-            <Form
-              form={form}
-              style={{ marginTop: 30 }}
-              name="normal_login"
-              className="login-form"
-              initialValues={{ remember: true }}
-            >
-              {variant === "register" && (
-                <Form.Item
-                  name="Email"
-                  rules={[
-                    {
-                      type: "email",
-                      message: "O E-mail informado não é válido!",
-                    },
-                    {
-                      required: true,
-                      message: "Por favor, insira seu E-mail!",
-                    },
-                  ]}
+          <Spin spinning={componentLoading} size="large">
+            {!componentLoading && (
+              <Card style={{ maxWidth: "100%", marginTop: 20 }}>
+                <Typography
+                  className="text-black text-4xl font-semibold"
+                  style={{ textAlign: "center" }}
                 >
-                  <Input
-                    id="email"
-                    type="text"
-                    placeholder="Email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                  />
-                </Form.Item>
-              )}
-              <Form.Item
-                name="username"
-                rules={[
-                  {
-                    required: true,
-                    message: "Por favor insira seu Documento Federal!",
-                  },
-                ]}
-              >
-                <Input
-                  placeholder="Documento Federal"
-                  id="documento"
-                  type="text"
-                  value={documento}
-                  onChange={(e) => setDocumento(e.target.value)}
-                />
-              </Form.Item>
-
-              <Form.Item
-                name="password"
-                rules={[
-                  {
-                    required: true,
-                    message: "Por favor insira sua senha",
-                  },
-                  {
-                    validator: (_, value) => {
-                      const passwordRegex =
-                        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/;
-                      if (!passwordRegex.test(value)) {
-                        return Promise.reject(
-                          new Error(
-                            "A senha deve ter pelo menos 8 caracteres, incluindo letras maiúsculas, minúsculas, números e caracteres especiais"
-                          )
-                        );
-                      }
-                      return Promise.resolve();
-                    },
-                  },
-                ]}
-              >
-                <Input.Password
-                  id="password"
-                  type="password"
-                  placeholder="Senha"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </Form.Item>
-              {variant === "register" && (
-                <Form.Item
-                  name="passwordConfirm"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Por favor confirme sua senha",
-                    },
-                    ({ getFieldValue }) => ({
-                      validator(_, value) {
-                        if (!value || getFieldValue("password") === value) {
-                          return Promise.resolve();
-                        }
-                        return Promise.reject(
-                          new Error("As senhas não estão iguais!")
-                        );
+                  {variant === "login" ? "Login" : "Registrar-se"}
+                </Typography>
+                <Form
+                  form={form}
+                  style={{ marginTop: 30 }}
+                  name="normal_login"
+                  className="login-form"
+                  initialValues={{ remember: true }}
+                >
+                  {variant === "register" && (
+                    <Form.Item
+                      name="Email"
+                      rules={[
+                        {
+                          type: "email",
+                          message: "O E-mail informado não é válido!",
+                        },
+                        {
+                          required: true,
+                          message: "Por favor, insira seu E-mail!",
+                        },
+                      ]}
+                    >
+                      <Input
+                        id="email"
+                        type="text"
+                        placeholder="Email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                      />
+                    </Form.Item>
+                  )}
+                  <Form.Item
+                    name="username"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Por favor insira seu Documento Federal!",
                       },
-                    }),
-                  ]}
-                >
-                  <Input.Password
-                    id="confirmPassword"
-                    type="password"
-                    value={confirmPassword}
-                    placeholder="Confirmar senha"
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                  />
-                </Form.Item>
-              )}
+                    ]}
+                  >
+                    <Input
+                      placeholder="Documento Federal"
+                      id="documento"
+                      type="text"
+                      value={documento}
+                      onChange={(e) => setDocumento(e.target.value)}
+                    />
+                  </Form.Item>
 
-              <Form.Item>
-                <Button
-                  size="large"
-                  style={{
-                    width: "100%",
-                    backgroundColor: "black",
-                    color: "white",
-                  }}
-                  onClick={variant === "login" ? login : register}
-                  disabled={loading}
-                >
-                  {variant === "login" ? "Entrar" : "Registrar"}
-                </Button>
-              </Form.Item>
-              <Form.Item style={{ textAlign: "center" }}>
-                {variant === "login"
-                  ? "Primeira vez aqui?"
-                  : "Já possui uma conta?"}
-                <span
-                  onClick={toggleVariant}
-                  className="text-black ml-1 hover:underline cursor-pointer"
-                >
-                  {variant === "login" ? "Registre-se" : "Entrar"}
-                </span>
-              </Form.Item>
-            </Form>
-          </Card>
+                  <Form.Item
+                    name="password"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Por favor insira sua senha",
+                      },
+                      {
+                        validator: (_, value) => {
+                          const passwordRegex =
+                            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/;
+                          if (!passwordRegex.test(value)) {
+                            return Promise.reject(
+                              new Error(
+                                "A senha deve ter pelo menos 8 caracteres, incluindo letras maiúsculas, minúsculas, números e caracteres especiais"
+                              )
+                            );
+                          }
+                          return Promise.resolve();
+                        },
+                      },
+                    ]}
+                  >
+                    <Input.Password
+                      id="password"
+                      type="password"
+                      placeholder="Senha"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                    />
+                  </Form.Item>
+                  {variant === "register" && (
+                    <Form.Item
+                      name="passwordConfirm"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Por favor confirme sua senha",
+                        },
+                        ({ getFieldValue }) => ({
+                          validator(_, value) {
+                            if (!value || getFieldValue("password") === value) {
+                              return Promise.resolve();
+                            }
+                            return Promise.reject(
+                              new Error("As senhas não estão iguais!")
+                            );
+                          },
+                        }),
+                      ]}
+                    >
+                      <Input.Password
+                        id="confirmPassword"
+                        type="password"
+                        value={confirmPassword}
+                        placeholder="Confirmar senha"
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                      />
+                    </Form.Item>
+                  )}
+
+                  <Form.Item>
+                    <Button
+                      size="large"
+                      style={{
+                        width: "100%",
+                        backgroundColor: "black",
+                        color: "white",
+                      }}
+                      onClick={variant === "login" ? login : register}
+                      disabled={loading}
+                    >
+                      {variant === "login" ? "Entrar" : "Registrar"}
+                    </Button>
+                  </Form.Item>
+                  <Form.Item style={{ textAlign: "center" }}>
+                    {variant === "login"
+                      ? "Primeira vez aqui?"
+                      : "Já possui uma conta?"}
+                    <span
+                      onClick={toggleVariant}
+                      className="text-black ml-1 hover:underline cursor-pointer"
+                    >
+                      {variant === "login" ? "Registre-se" : "Entrar"}
+                    </span>
+                  </Form.Item>
+                </Form>
+              </Card>
+            )}
+          </Spin>
         </Col>
       </Row>
     </div>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Layout, Card, Row, Col, Tabs } from "antd";
+import { Layout, Card, Row, Col, Tabs, Spin } from "antd";
 import {
   DollarOutlined,
   DownCircleOutlined,
@@ -25,6 +25,7 @@ const Home = () => {
   const [lastExpense, setLastExpense] = useState<number>(0);
   const [lastIncome, setLastIncome] = useState<number>(0);
   const [total, setTotal] = useState<number>(0);
+  const [loading, setLoading] = useState<boolean>(true);
   const [token, setUserToken] = useState<UserToken>();
 
   const router = useRouter();
@@ -39,8 +40,15 @@ const Home = () => {
       incomeService = new IncomeService(userToken.token);
 
       setUserToken(userToken);
-      ExpenseGetData(userToken.userId);
-      IncomeGetData(userToken.userId);
+      Promise.all([
+        ExpenseGetData(userToken.userId),
+        IncomeGetData(userToken.userId),
+      ])
+        .then(() => setLoading(false))
+        .catch(() => {
+          toast.error("Erro ao carregar os dados.");
+          setLoading(false);
+        });
     } else {
       router.replace("/");
     }
@@ -105,50 +113,74 @@ const Home = () => {
     <Layout style={{ minHeight: "100vh" }}>
       <NavBar />
       <Content style={{ margin: "24px 16px 0" }}>
-        <Row gutter={[16, 16]} justify="center" style={{ marginTop: "35px" }}>
-          {cardData.map((data, index) => (
-            <Col xs={24} sm={12} md={8} lg={6} key={`${data.name}-${index}`}>
-              <Card
-                style={{
-                  textAlign: "center",
-                  fontSize: "18px",
-                  fontWeight: 500,
-                }}
-              >
-                <div>
-                  <p
-                    className="mainName"
+        {loading ? (
+          <Spin
+            tip="Carregando..."
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              height: "100vh",
+            }}
+          />
+        ) : (
+          <>
+            <Row
+              gutter={[16, 16]}
+              justify="center"
+              style={{ marginTop: "35px" }}
+            >
+              {cardData.map((data, index) => (
+                <Col
+                  xs={24}
+                  sm={12}
+                  md={8}
+                  lg={6}
+                  key={`${data.name}-${index}`}
+                >
+                  <Card
                     style={{
-                      margin: "20px",
-                      color: data.id === 1 ? "red" : "green",
+                      textAlign: "center",
+                      fontSize: "18px",
+                      fontWeight: 500,
                     }}
                   >
-                    {data.name} {data.icon}
-                  </p>
-                  <p>
-                    {data?.value?.toLocaleString("pt-BR", {
-                      style: "currency",
-                      currency: "BRL",
-                    })}
-                  </p>
-                </div>
-              </Card>
-            </Col>
-          ))}
-        </Row>
-        <Card style={{ margin: 10 }}>
-          <Tabs defaultActiveKey="categoria">
-            <TabPane tab="Categoria" key="categoria">
-              <FinTable />
-            </TabPane>
-            <TabPane tab="Entrada" key="entrada">
-              <IncomeTable />
-            </TabPane>
-            <TabPane tab="Saída" key="saida">
-              <ExpenseTable />
-            </TabPane>
-          </Tabs>
-        </Card>
+                    <div>
+                      <p
+                        className="mainName"
+                        style={{
+                          margin: "20px",
+                          color: data.id === 1 ? "red" : "green",
+                        }}
+                      >
+                        {data.name} {data.icon}
+                      </p>
+                      <p>
+                        {data?.value?.toLocaleString("pt-BR", {
+                          style: "currency",
+                          currency: "BRL",
+                        })}
+                      </p>
+                    </div>
+                  </Card>
+                </Col>
+              ))}
+            </Row>
+            <Card style={{ margin: 10 }}>
+              <Tabs defaultActiveKey="categoria">
+                <TabPane tab="Categoria" key="categoria">
+                  <FinTable />
+                </TabPane>
+                <TabPane tab="Entrada" key="entrada">
+                  <IncomeTable />
+                </TabPane>
+                <TabPane tab="Saída" key="saida">
+                  <ExpenseTable />
+                </TabPane>
+              </Tabs>
+            </Card>
+          </>
+        )}
       </Content>
     </Layout>
   );

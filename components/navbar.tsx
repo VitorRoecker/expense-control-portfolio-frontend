@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Menu, Layout, Modal } from "antd";
 import {
   DeleteOutlined,
+  DownOutlined,
   HomeOutlined,
   LineChartOutlined,
   LogoutOutlined,
@@ -10,6 +11,7 @@ import router from "next/router";
 import { UserService } from "@/services/user.service";
 
 const { Header } = Layout;
+const { SubMenu } = Menu;
 
 const NavBar = () => {
   const [current, setCurrent] = useState("");
@@ -72,12 +74,14 @@ const NavBar = () => {
   const items = [
     { icon: <HomeOutlined />, label: "Home", key: "home" },
     { icon: <LineChartOutlined />, label: "Gráficos", key: "graphics" },
-    { icon: <DeleteOutlined />, label: "Deletar conta", key: "delete" },
     {
-      icon: <LogoutOutlined />,
-      label: "Sair",
-      key: "logout",
-      style: { float: "right" },
+      label: "Usuário",
+      key: "account",
+      icon: <DownOutlined />,
+      children: [
+        { icon: <DeleteOutlined />, label: "Deletar conta", key: "delete" },
+        { icon: <LogoutOutlined />, label: "Sair", key: "logout" },
+      ],
     },
   ];
 
@@ -91,15 +95,34 @@ const NavBar = () => {
           onClick={onClick}
           style={{ float: "right", backgroundColor: "black" }}
         >
-          {items.map((item) => (
-            <Menu.Item
-              style={{ backgroundColor: "black" }}
-              key={item.key}
-              icon={item.icon}
-            >
-              {item.label}
-            </Menu.Item>
-          ))}
+          {items.map((item) =>
+            item.children ? (
+              <SubMenu
+                key={item.key}
+                icon={item.icon}
+                title={item.label}
+                style={{ backgroundColor: "black" }}
+              >
+                {item.children.map((subItem) => (
+                  <Menu.Item
+                    key={subItem.key}
+                    icon={subItem.icon}
+                    style={{ backgroundColor: "black" }}
+                  >
+                    {subItem.label}
+                  </Menu.Item>
+                ))}
+              </SubMenu>
+            ) : (
+              <Menu.Item
+                key={item.key}
+                icon={item.icon}
+                style={{ backgroundColor: "black" }}
+              >
+                {item.label}
+              </Menu.Item>
+            )
+          )}
         </Menu>
       </Header>
     </>

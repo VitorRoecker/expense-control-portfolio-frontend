@@ -1,6 +1,6 @@
-import React, { useLayoutEffect, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Line } from "react-chartjs-2";
-import { Layout } from "antd";
+import { Layout, Spin } from "antd";
 import NavBar from "@/components/navbar";
 import { Expense } from "@/types/interfaces/expense.interface";
 import { Income } from "@/types/interfaces/income.interface";
@@ -18,7 +18,6 @@ import {
 } from "chart.js";
 import { useRouter } from "next/navigation";
 
-// Register the necessary components
 Chart.register(
   CategoryScale,
   LinearScale,
@@ -57,6 +56,7 @@ const Graphics = () => {
       },
     ],
   });
+  const [loading, setLoading] = useState(true);
 
   const router = useRouter();
 
@@ -74,15 +74,17 @@ const Graphics = () => {
         try {
           const [expenseData, incomeData] = await Promise.all([
             expenseService.GetAll(userToken.userId),
-            incomeService.GetAll(userToken.userId)
-          ])
+            incomeService.GetAll(userToken.userId),
+          ]);
 
           setExpenseItems(expenseData);
           setIncomeItems(incomeData);
 
           updateChartData(expenseData, incomeData);
+          setLoading(false);
         } catch (error) {
           console.error("Failed to fetch data:", error);
+          setLoading(false);
         }
       } else {
         router.replace("/");
@@ -139,9 +141,22 @@ const Graphics = () => {
     <>
       <NavBar />
       <Layout style={{ minHeight: "100vh" }}>
-        <Layout style={{ width: "80%", margin: 20 }}>
-          <Line data={chartData} />
-        </Layout>
+        {loading ? (
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              height: "100vh",
+            }}
+          >
+            <Spin size="large" />
+          </div>
+        ) : (
+          <Layout style={{ width: "80%", margin: 20 }}>
+            <Line data={chartData} />
+          </Layout>
+        )}
       </Layout>
     </>
   );
