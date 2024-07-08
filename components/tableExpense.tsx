@@ -217,23 +217,15 @@ const ExpenseTable = () => {
         )}
       />
       <Modal
-        title={editing ? "Editar Saída" : "Adicionar Nova Saída"}
+        title={editing ? "Editar Saída" : "Adicionar saída"}
         open={isModalVisible}
         onCancel={handleCloseModal}
-        footer={[
-          <Button key="cancel" onClick={handleCloseModal}>
-            Cancelar
-          </Button>,
-          <Button key="submit" type="primary" onClick={() => form.submit()}>
-            {editing ? "Atualizar" : "Adicionar"}
-          </Button>,
-        ]}
+        onOk={editing ? handleUpdateExpense : handleAddExpense}
+        okButtonProps={{ type: "default", color: "primary" }}
+        cancelButtonProps={{ danger: true }}
+        okText="Salvar"
       >
-        <Form
-          form={form}
-          onFinish={editing ? handleUpdateExpense : handleAddExpense}
-          layout="vertical"
-        >
+        <Form form={form} layout="vertical">
           <Form.Item
             name="categoryId"
             label="Categoria"
