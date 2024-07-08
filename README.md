@@ -1,34 +1,31 @@
-<h1 align="center">Personal Finance Management App - Frontend</h1>
+<h1 align="center">Aplicativo de Gestão de Finanças Pessoais - Frontend</h1>
 
 ## 📝 Overview
-> - This repository houses the frontend code for the Personal Finance Management App. Developed using React and TypeScript, the frontend aims to provide an intuitive and seamless user experience for managing personal finances.
+> - Este repositório contém o código frontend para o Aplicativo de Gestão de Finanças Pessoais. Desenvolvido usando React e TypeScript.
 
 ## 💻 Tech Stack
 
-> - Library: React
-> - Language: TypeScript
-> - UI Library: Material-UI 
+> - Biblioteca: React
+> - Linguagem: TypeScript
+> - Biblioteca de UI: Ant Design
   
 ## 🚀 Getting Started
 
-### Clone the frontend repository: 
+### Clone o repositório frontend: 
 ```cmd
 git clone <frontend-repository-url>
 ```
-### Navigate to the project directory: 
+### Navegue até o diretório do projeto: 
 ```cmd
 cd <frontend-project-directory>
 ```
-### Install dependencies: 
+### Instale as dependências: 
 ```cmd
 npm install
 ```
-### Start the development server: 
+### Inicie o ambiente de desenvolvimento: 
 ```cmd
 npm run dev
 ```
 
-Open http://localhost:3000 with your browser to see the result.
-
-##
-Thank you for considering or using this project! Feel free to star ⭐ the repository if you find it helpful!
+Abra http://localhost:3000 no seu navegador para ver o resultado.
