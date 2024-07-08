@@ -1,37 +1,46 @@
 import React, { useEffect, useState } from "react";
-import { Layout, Card, Row, Col } from "antd";
+import { Layout, Card, Row, Col, Tabs } from "antd";
 import {
   DollarOutlined,
   DownCircleOutlined,
   UpCircleOutlined,
 } from "@ant-design/icons";
-import FinTable from "../components/table";
+import FinTable from "../components/tableCategory";
 import NavBar from "@/components/navbar";
 import { ExpenseService } from "@/services/expense.service";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { Expense } from "@/types/interfaces/expense.interface";
+import ExpenseTable from "@/components/tableExpense";
+import IncomeTable from "@/components/tableIncome";
+import { IncomeService } from "@/services/income.service";
+import { Income } from "@/types/interfaces/income.interface";
 
 const { Content } = Layout;
+const { TabPane } = Tabs;
 
 const Home = () => {
   const [expenses, setExpenseItems] = useState<Expense[]>([]);
+  const [income, setIncomeItems] = useState<Income[]>([]);
+  const [lastExpense, setLastExpense] = useState<number>(0);
+  const [lastIncome, setLastIncome] = useState<number>(0);
+  const [total, setTotal] = useState<number>(0);
+  const [token, setUserToken] = useState<UserToken>();
+
   const router = useRouter();
   var expenseService: ExpenseService;
-
-  const [cardValues, setCardValues] = useState({
-    lastIncome: 100,
-    lastExpense: 100,
-    total: 0,
-  });
-
+  var incomeService: IncomeService;
 
   useEffect(() => {
     var authentication = localStorage.getItem("Authentication");
     if (authentication) {
       var userToken = JSON.parse(authentication) as UserToken;
       expenseService = new ExpenseService(userToken.token);
+      incomeService = new IncomeService(userToken.token);
+
+      setUserToken(userToken);
       ExpenseGetData(userToken.userId);
+      IncomeGetData(userToken.userId);
     } else {
       toast.warning("Erro ao buscar informações do login.");
       router.replace("/home");
@@ -41,26 +50,60 @@ const Home = () => {
   async function ExpenseGetData(userId: string) {
     var expenseItems = await expenseService.GetAll(userId);
     setExpenseItems(expenseItems);
+    if (expenseItems.length > 0) {
+      const mostRecentExpense = Math.max(
+        ...expenseItems.map((exp) => new Date(exp.inclusionDate).getTime())
+      );
+      const recentExpenseItem = expenseItems.find(
+        (exp) => new Date(exp.inclusionDate).getTime() === mostRecentExpense
+      );
+      if (recentExpenseItem) {
+        setLastExpense(recentExpenseItem.amount);
+      }
+    }
+    calculateTotal(expenseItems, income);
   }
+  async function IncomeGetData(userId: string) {
+    var incomeItems = await incomeService.GetAll(userId);
+    setIncomeItems(incomeItems);
+    if (incomeItems.length > 0) {
+      const mostRecentIncome = Math.max(
+        ...incomeItems.map((inc) => new Date(inc.inclusionDate).getTime())
+      );
+      const recentIncomeItem = incomeItems.find(
+        (inc) => new Date(inc.inclusionDate).getTime() === mostRecentIncome
+      );
+      if (recentIncomeItem) {
+        setLastIncome(recentIncomeItem.amount);
+      }
+    }
+    calculateTotal(expenses, incomeItems);
+  }
+
+  const calculateTotal = (expenses: Expense[], income: Income[]) => {
+    const totalIncome = income.reduce((acc, inc) => acc + inc.amount, 0);
+    const totalExpenses = expenses.reduce((acc, exp) => acc + exp.amount, 0);
+    setTotal(totalIncome - totalExpenses);
+  };
 
   const cardData = [
     {
       name: "Última Entrada",
       icon: <UpCircleOutlined />,
-      value: cardValues.lastIncome,
+      value: lastIncome,
       id: 2,
     },
     {
       name: "Última Saída",
       icon: <DownCircleOutlined />,
-      value: cardValues.lastExpense,
+      value: lastExpense,
       id: 1,
     },
-    { name: "Total", icon: <DollarOutlined />, value: cardValues.total, id: 3 },
+    { name: "Total", icon: <DollarOutlined />, value: total, id: 3 },
   ];
 
   return (
-    <Layout style={{ height: "100%" }}>
+    <Layout style={{ minHeight: "100vh" }}>
       <NavBar />
       <Content style={{ margin: "24px 16px 0" }}>
         <Row gutter={[16, 16]} justify="center" style={{ marginTop: "35px" }}>
@@ -84,7 +127,7 @@ const Home = () => {
                     {data.name} {data.icon}
                   </p>
                   <p>
-                    {data.value.toLocaleString("pt-BR", {
+                    {data?.value?.toLocaleString("pt-BR", {
                       style: "currency",
                       currency: "BRL",
                     })}
@@ -94,7 +137,19 @@ const Home = () => {
             </Col>
           ))}
         </Row>
-        <FinTable expense={expenses} />
+        <Card style={{ margin: 10 }}>
+          <Tabs defaultActiveKey="categoria">
+            <TabPane tab="Categoria" key="categoria">
+              <FinTable />
+            </TabPane>
+            <TabPane tab="Entrada" key="entrada">
+              <IncomeTable />
+            </TabPane>
+            <TabPane tab="Saída" key="saida">
+              <ExpenseTable />
+            </TabPane>
+          </Tabs>
+        </Card>
       </Content>
     </Layout>
   );
